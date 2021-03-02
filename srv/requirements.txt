@@ -1,0 +1,3 @@
+bottle
+pandas
+snowflake-connector-python[pandas]
