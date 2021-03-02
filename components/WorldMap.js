@@ -65,7 +65,7 @@ const WorldMap = () => {
           return
         }
         response.json().then(citiesdata => {
-          setCities(feature(citiesdata, citiesdata))
+          setCities(citiesdata)
         })
       })
   }, [])
@@ -102,7 +102,7 @@ const WorldMap = () => {
               key={ `marker-${i}` }
               cx={ projection(city.coordinates)[0] }
               cy={ projection(city.coordinates)[1] }
-              r={ city.auths / 3000000 }
+              r={ city.auths / 20 }
               fill="#6dbf51"
               stroke="#FFFFFF"
               className="marker"
