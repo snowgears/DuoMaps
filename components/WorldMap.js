@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react"
 import { geoEqualEarth, geoPath } from "d3-geo"
 import { feature } from "topojson-client"
+import { scaleSqrt } from "d3-scale"
+import styles from "./WorldMap.module.css"
 
 // const cities = [
 //   { name: "Tokyo",          coordinates: [139.6917,35.6895],  auths: 37843000 },
@@ -37,12 +39,13 @@ import { feature } from "topojson-client"
 // ]
 
 const projection = geoEqualEarth()
-  .scale(160)
-  .translate([ 800 / 2, 450 / 2 ])
+  .scale(320)
+  .translate([ 800 , 450 ])
 
 const WorldMap = () => {
   const [geographies, setGeographies] = useState([])
   const [cities, setCities] = useState([])
+  const [maxAuths, setMaxAuths] = useState(0)
 
   useEffect(() => {
     fetch("/world-110m.json")
@@ -65,6 +68,7 @@ const WorldMap = () => {
           return
         }
         response.json().then(citiesdata => {
+          setMaxAuths(Math.max(...citiesdata.map(o => o.auths), 0))
           setCities(citiesdata)
         })
       })
@@ -78,8 +82,12 @@ const WorldMap = () => {
     console.log("Marker: ", cities[i])
   }
 
+  var radius = scaleSqrt()
+    .domain([0, maxAuths])
+    .range([0, 20]);
+
   return (
-    <svg width={ 800 } height={ 450 } viewBox="0 0 800 450">
+    <svg width={ 1600 } height={ 900 } viewBox="0 0 1600 900">
       <g className="countries">
         {
           geographies.map((d,i) => (
@@ -87,7 +95,7 @@ const WorldMap = () => {
               key={ `path-${ i }` }
               d={ geoPath().projection(projection)(d) }
               className="country"
-              fill={ `rgba(38,50,56,${ 1 / geographies.length * i})` }
+              fill={ `rgba(221,221,221,1)` }
               stroke="#FFFFFF"
               strokeWidth={ 0.5 }
               onClick={ () => handleCountryClick(i) }
@@ -95,14 +103,14 @@ const WorldMap = () => {
           ))
         }
       </g>
-      <g className="markers">
+      <g className={styles.marker}>
         {
-          cities.map((city, i) => (
+          cities.sort((a, b) => b.auths - a.auths).map((city, i) => (
             <circle
               key={ `marker-${i}` }
               cx={ projection(city.coordinates)[0] }
               cy={ projection(city.coordinates)[1] }
-              r={ city.auths / 20 }
+              r={ radius(city.auths) }
               fill="#6dbf51"
               stroke="#FFFFFF"
               className="marker"
