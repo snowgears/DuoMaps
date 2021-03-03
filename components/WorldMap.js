@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react"
 import { geoEqualEarth, geoPath } from "d3-geo"
 import { feature } from "topojson-client"
-import { scaleSqrt } from "d3-scale"
+import * as d3 from "d3"
 import styles from "./WorldMap.module.css"
 
 // const cities = [
@@ -82,7 +82,48 @@ const WorldMap = () => {
     console.log("Marker: ", cities[i])
   }
 
-  var radius = scaleSqrt()
+   // Three function that change the tooltip when user hover / move / leave a cell
+   var mouseover = function(t, d) {
+    Tooltip
+      .style("opacity", 1)
+    d3.select(t)
+      .style("stroke", "black")
+      .style("opacity", 1)
+  }
+  var mousemove = function(t, d) {
+    Tooltip
+      .html(d.city)
+      .style("left", (d3.pointer(t)[0]+70) + "px")
+      .style("top", (d3.pointer(t)[1]) + "px")
+  }
+  var mouseleave = function(t, d) {
+    Tooltip
+      .style("opacity", 0)
+    d3.select(t)
+      .style("stroke", "none")
+      .style("opacity", 0.8)
+  }
+
+  // const handleMarkerMouseEnter = i => {
+  //   console.log("Enter Marker: ", cities[i])
+  // }
+
+  // const handleMarkerMouseLeave = i => {
+  //   console.log("Leave Marker: ", cities[i])
+  // }
+
+      // create a tooltip
+var Tooltip = d3.selectAll()
+.append("div")
+.style("opacity", 0)
+.attr("class", "tooltip")
+.style("background-color", "white")
+.style("border", "solid")
+.style("border-width", "2px")
+.style("border-radius", "5px")
+.style("padding", "5px")
+
+  var radius =  d3.scaleSqrt()
     .domain([0, maxAuths])
     .range([0, 20]);
 
@@ -114,8 +155,11 @@ const WorldMap = () => {
               fill="#6dbf51"
               stroke="#FFFFFF"
               className="marker"
-              name={city.name}
+              title={city.name}
               onClick={ () => handleMarkerClick(i) }
+              onMouseEnter={ () => mouseover(circle, i) }
+              onMouseLeave={ () => mouseleave(circle, i) }
+              onMouseMove={ () => mousemove(circle, i) }
             />
           ))
         }
