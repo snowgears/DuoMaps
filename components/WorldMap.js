@@ -82,46 +82,48 @@ const WorldMap = () => {
     console.log("Marker: ", cities[i])
   }
 
+  //TODO these functions should work fine but the ToolTip isnt being created correctly and the pointer context for 'this' isnt being passed correctly
    // Three function that change the tooltip when user hover / move / leave a cell
-   var mouseover = function(t, d) {
-    Tooltip
-      .style("opacity", 1)
-    d3.select(t)
-      .style("stroke", "black")
-      .style("opacity", 1)
-  }
-  var mousemove = function(t, d) {
-    Tooltip
-      .html(d.city)
-      .style("left", (d3.pointer(t)[0]+70) + "px")
-      .style("top", (d3.pointer(t)[1]) + "px")
-  }
-  var mouseleave = function(t, d) {
-    Tooltip
-      .style("opacity", 0)
-    d3.select(t)
-      .style("stroke", "none")
-      .style("opacity", 0.8)
-  }
-
-  // const handleMarkerMouseEnter = i => {
-  //   console.log("Enter Marker: ", cities[i])
+  //  var mouseover = function(t, d) {
+  //   Tooltip
+  //     .style("opacity", 1)
+  //   d3.select(t)
+  //     .style("stroke", "black")
+  //     .style("opacity", 1)
   // }
+  // var mousemove = function(t, d) {
+  //   Tooltip
+  //     .html(d.city)
+  //     .style("left", (d3.pointer(t)[0]+70) + "px")
+  //     .style("top", (d3.pointer(t)[1]) + "px")
+  // }
+  // var mouseleave = function(t, d) {
+  //   Tooltip
+  //     .style("opacity", 0)
+  //   d3.select(t)
+  //     .style("stroke", "none")
+  //     .style("opacity", 0.8)
+  // }
+
+  const handleMarkerMouseEnter = i => {
+    console.log("Marker: ", cities[i])
+  }
 
   // const handleMarkerMouseLeave = i => {
   //   console.log("Leave Marker: ", cities[i])
   // }
 
+  //this is not being created in the right spot. Cant reference it from mousemove() event above yet
       // create a tooltip
-var Tooltip = d3.selectAll()
-.append("div")
-.style("opacity", 0)
-.attr("class", "tooltip")
-.style("background-color", "white")
-.style("border", "solid")
-.style("border-width", "2px")
-.style("border-radius", "5px")
-.style("padding", "5px")
+// var Tooltip = d3.selectAll()
+// .append("div")
+// .style("opacity", 0)
+// .attr("class", "tooltip")
+// .style("background-color", "white")
+// .style("border", "solid")
+// .style("border-width", "2px")
+// .style("border-radius", "5px")
+// .style("padding", "5px")
 
   var radius =  d3.scaleSqrt()
     .domain([0, maxAuths])
@@ -157,9 +159,9 @@ var Tooltip = d3.selectAll()
               className="marker"
               title={city.name}
               onClick={ () => handleMarkerClick(i) }
-              onMouseEnter={ () => mouseover(circle, i) }
-              onMouseLeave={ () => mouseleave(circle, i) }
-              onMouseMove={ () => mousemove(circle, i) }
+              onMouseEnter={ () => handleMarkerMouseEnter(i) }
+              onMouseLeave={ () => handleMarkerMouseEnter(i) }
+              onMouseMove={ () => handleMarkerMouseEnter(i) }
             />
           ))
         }
